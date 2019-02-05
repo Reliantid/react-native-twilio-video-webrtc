@@ -57,6 +57,12 @@ public class CustomTwilioVideoViewManager extends SimpleViewManager<CustomTwilio
     }
 
     @Override
+    public void onDropViewInstance(CustomTwilioVideoView view) {
+        super.onDropViewInstance(view);
+        view.releaseInstance();
+    }
+
+    @Override
     public void receiveCommand(CustomTwilioVideoView view, int commandId, @Nullable ReadableArray args) {
         switch (commandId) {
             case CONNECT_TO_ROOM:

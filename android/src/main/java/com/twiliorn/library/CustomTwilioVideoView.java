@@ -163,6 +163,10 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
         intentFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
     }
 
+    public void releaseInstance() {
+        themedReactContext.removeLifecycleEventListener(this);
+    }
+
     // ===== SETUP =================================================================================
 
     private VideoConstraints buildVideoConstraints() {
