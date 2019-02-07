@@ -567,6 +567,10 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
             public void onDisconnected(Room room, TwilioException e) {
                 WritableMap event = new WritableNativeMap();
                 event.putString("participant", localParticipant.getIdentity());
+                event.putString("room", room.getName());
+                if (e != null) {
+                  event.putString("error", e.getLocalizedMessage());
+                }
                 pushEvent(CustomTwilioVideoView.this, ON_DISCONNECTED, event);
 
                 localParticipant = null;
