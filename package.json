@@ -2,10 +2,10 @@
   "name": "react-native-twilio-video-webrtc",
   "repository": {
     "type": "git",
-    "url": "https://github.com/blackuy/react-native-twilio-video-webrtc.git"
+    "url": "https://github.com/Reliantid/react-native-twilio-video-webrtc.git"
   },
-  "homepage": "https://github.com/blackuy/react-native-twilio-video-webrtc",
-  "version": "1.0.2",
+  "homepage": "https://github.com/Reliantid/react-native-twilio-video-webrtc",
+  "version": "1.0.3",
   "description": "Reliant ID - Twilio Video WebRTC for React Native.",
   "main": "index.js",
   "scripts": {
