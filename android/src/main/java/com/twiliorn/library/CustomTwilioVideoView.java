@@ -307,11 +307,16 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
       createLocalMedia();
     } else {
       localAudioTrack = LocalAudioTrack.create(getContext(), true);
+      localVideoTrack = LocalVideoTrack.create(getContext(), true, cameraCapturer, buildVideoConstraints());
+      if (thumbnailVideoView != null && localVideoTrack != null) {
+        localVideoTrack.addRenderer(thumbnailVideoView);
+      }
       connectToRoom();
     }
   }
 
   public void connectToRoom() {
+    Log.i("CustomTwilioVideoView", "connectToRoom");
     /*
      * Create a VideoClient allowing you to connect to a Room
      */
@@ -538,6 +543,7 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
     return new Room.Listener() {
       @Override
       public void onConnected(Room room) {
+        Log.i("CustomTwilioVideoView", "Room.onConnected");
         localParticipant = room.getLocalParticipant();
         WritableMap event = new WritableNativeMap();
         event.putString("roomName", room.getName());
@@ -558,6 +564,7 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
 
       @Override
       public void onConnectFailure(Room room, TwilioException e) {
+        Log.i("CustomTwilioVideoView", "Room.onConnectFailure");
         WritableMap event = new WritableNativeMap();
         if (e != null) {
           event.putString("error", e.getLocalizedMessage());
@@ -567,6 +574,7 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
 
       @Override
       public void onDisconnected(Room room, TwilioException e) {
+        Log.i("CustomTwilioVideoView", "Room.onDisconnected");
         WritableMap event = new WritableNativeMap();
         event.putString("roomName", room.getName());
         if (e != null) {
@@ -577,7 +585,6 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
         localParticipant = null;
         roomName = null;
         accessToken = null;
-
 
         CustomTwilioVideoView.room = null;
         // Only reinitialize the UI if disconnect was not called from onDestroy()
@@ -640,8 +647,8 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
    */
   private void removeParticipant(RemoteParticipant participant) {
     WritableMap event = new WritableNativeMap();
-    if (this.room != null) {
-      event.putString("roomName", this.room.getName());
+    if (room != null) {
+      event.putString("roomName", room.getName());
     }
     event.putMap("participant", buildParticipant(participant));
     pushEvent(this, ON_PARTICIPANT_DISCONNECTED, event);
