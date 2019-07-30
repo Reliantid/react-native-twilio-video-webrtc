@@ -61,6 +61,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_AUDIO_CHANGED;
 import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_CAMERA_SWITCHED;
@@ -143,6 +144,8 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
 
   public CustomTwilioVideoView(ThemedReactContext context) {
     super(context);
+    Log.i("CustomTwilioVideoView", "constructor");
+
     this.themedReactContext = context;
     this.eventEmitter = themedReactContext.getJSModule(RCTEventEmitter.class);
 
@@ -164,6 +167,7 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
   }
 
   public void releaseInstance() {
+    Log.i("CustomTwilioVideoView", "releaseInstance");
     themedReactContext.removeLifecycleEventListener(this);
   }
 
@@ -219,6 +223,8 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
 
   @Override
   public void onHostResume() {
+    Log.i("CustomTwilioVideoView", "onHostResume");
+
     /*
      * In case it wasn't set.
      */
@@ -272,6 +278,8 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
 
   @Override
   public void onHostDestroy() {
+    Log.i("CustomTwilioVideoView", "onHostDestroy");
+
     /*
      * Always disconnect from the room before leaving the Activity to
      * ensure any memory allocated to the Room resource is freed.
@@ -339,6 +347,8 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
   }
 
   private void setAudioFocus(boolean focus) {
+    Log.i("CustomTwilioVideoView", String.format(Locale.US, "setAudioFocus(%b)", focus));
+
     if (focus) {
       previousAudioMode = audioManager.getMode();
       // Request audio focus before making any device switch.
@@ -373,6 +383,8 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
   // ====== DISCONNECTING ========================================================================
 
   public void disconnect() {
+    Log.i("CustomTwilioVideoView","disconnect");
+
     if (room != null) {
       room.disconnect();
     }
@@ -580,17 +592,21 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
         if (e != null) {
           event.putString("error", e.getLocalizedMessage());
         }
-        pushEvent(CustomTwilioVideoView.this, ON_DISCONNECTED, event);
 
+        // clear the internal variables before sending the disconnect notification
         localParticipant = null;
         roomName = null;
         accessToken = null;
 
         CustomTwilioVideoView.room = null;
+
         // Only reinitialize the UI if disconnect was not called from onDestroy()
         if (!disconnectedFromOnDestroy) {
           setAudioFocus(false);
         }
+
+        // finally fire the disconnect event
+        pushEvent(CustomTwilioVideoView.this, ON_DISCONNECTED, event);
       }
 
       @Override
