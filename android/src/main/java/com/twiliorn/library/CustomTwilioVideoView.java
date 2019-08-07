@@ -149,9 +149,6 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
     this.themedReactContext = context;
     this.eventEmitter = themedReactContext.getJSModule(RCTEventEmitter.class);
 
-    // add lifecycle for onResume and on onPause
-    themedReactContext.addLifecycleEventListener(this);
-
     /*
      * Enable changing the volume using the up/down keys during a conversation
      */
@@ -567,6 +564,9 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
         }
         event.putArray("participants", participantsArray);
 
+        // add lifecycle for onResume and on onPause
+        themedReactContext.addLifecycleEventListener(CustomTwilioVideoView.this);
+
         pushEvent(CustomTwilioVideoView.this, ON_CONNECTED, event);
 
         for (RemoteParticipant participant : participants) {
@@ -604,6 +604,9 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
         if (!disconnectedFromOnDestroy) {
           setAudioFocus(false);
         }
+
+        // now that the room is disconnected, stop listening for lifecycle events
+        themedReactContext.removeLifecycleEventListener(CustomTwilioVideoView.this);
 
         // finally fire the disconnect event
         pushEvent(CustomTwilioVideoView.this, ON_DISCONNECTED, event);
