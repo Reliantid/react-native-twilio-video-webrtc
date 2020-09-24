@@ -19,10 +19,6 @@ const { TWVideoModule } = NativeModules
 export default class extends Component {
   static propTypes = {
     /**
-     * Flag that enables screen sharing RCTRootView instead of camera capture
-     */
-    screenShare: PropTypes.bool,
-    /**
      * Called when the room has connected
      *
      * @param {{roomName, participants}}
@@ -110,6 +106,11 @@ export default class extends Component {
      *
      */
     onCameraWasInterrupted: PropTypes.func,
+    /**
+     * Called when the camera interruption has ended
+     *
+     */
+    onCameraInterruptionEnded: PropTypes.func,
     /**
      * Called when the camera has stopped runing with an error
      *
@@ -202,8 +203,7 @@ export default class extends Component {
   }
 
   _startLocalVideo () {
-    const screenShare = this.props.screenShare || false
-    TWVideoModule.startLocalVideo(screenShare)
+    TWVideoModule.startLocalVideo()
   }
 
   _stopLocalVideo () {
@@ -269,6 +269,9 @@ export default class extends Component {
       }),
       this._eventEmitter.addListener('cameraWasInterrupted', (data) => {
         if (this.props.onCameraWasInterrupted) { this.props.onCameraWasInterrupted(data) }
+      }),
+      this._eventEmitter.addListener('cameraInterruptionEnded', data => {
+        if (this.props.onCameraInterruptionEnded) { this.props.onCameraInterruptionEnded(data) }
       }),
       this._eventEmitter.addListener('cameraDidStopRunning', (data) => {
         if (this.props.onCameraDidStopRunning) { this.props.onCameraDidStopRunning(data) }
